@@ -3,17 +3,17 @@ Contributing to Paper
 PaperMC has a very lenient policy towards PRs, but would prefer that you try and adhere to the following guidelines.
 
 ## Understanding Patches
-Patches to Paper are very simple, but center around the directories 'Paper-API' and 'Paper-Server'
+Patches to Paper are very simple, but center around the directories 'Lighter-API' and 'Lighter-Server'
 
 Assuming you already have forked the repository:
 
 1. Pull the latest changes from the main repository
 2. Type `./paper patch` in git bash to apply the changes from upstream
-3. cd into `Paper-Server` for server changes, and `Paper-API` for API changes
+3. cd into `Lighter-Server` for server changes, and `Lighter-API` for API changes
 
 These directories aren't git repositories in the traditional sense:
 
-- Every single commit in Paper-Server/API is a patch. 
+- Every single commit in Lighter-Server/API is a patch. 
 - 'origin/master' points to a directory similar to Paper-Server/API but for Paper
 - Typing `git status` should show that we are 10 or 11 commits ahead of master, meaning we have 10 or 11 patches that Paper and Spigot don't
   - If it says something like `212 commits ahead, 207 commits behind`, then type `git fetch` to update spigot/paper
@@ -21,7 +21,7 @@ These directories aren't git repositories in the traditional sense:
 ## Adding Patches
 Adding patches to Paper is very simple:
 
-1. Modify `Paper-Server` and/or `Paper-API` with the appropriate changes
+1. Modify `Lighter-Server` and/or `Lighter-API` with the appropriate changes
 2. Type `git add .` to add your changes
 3. Run `git commit` with the desired patch message
 4. Run `./paper rebuild` in the main directory to convert your commit into a new patch

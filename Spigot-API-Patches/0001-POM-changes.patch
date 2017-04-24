@@ -15,22 +15,22 @@ index 28d2a57..0b6fd28 100644
 -        <groupId>org.sonatype.oss</groupId>
 -        <artifactId>oss-parent</artifactId>
 -        <version>9</version>
-+        <groupId>com.destroystokyo.paper</groupId>
-+        <artifactId>paper-parent</artifactId>
++        <groupId>com.ulfric.lighter</groupId>
++        <artifactId>lighter-parent</artifactId>
 +        <version>dev-SNAPSHOT</version>
      </parent>
  
 -    <groupId>org.spigotmc</groupId>
 -    <artifactId>spigot-api</artifactId>
-+    <groupId>com.destroystokyo.paper</groupId>
-+    <artifactId>paper-api</artifactId>
++    <groupId>com.ulfric.lighter</groupId>
++    <artifactId>lighter-api</artifactId>
      <version>1.11.2-R0.1-SNAPSHOT</version>
      <packaging>jar</packaging>
  
 -    <name>Spigot-API</name>
 -    <url>http://www.spigotmc.org/</url>
-+    <name>Paper-API</name>
-+    <url>https://github.com/PaperMC/Paper</url>
++    <name>Lighter-API</name>
++    <url>https://github.com/UlfricProjects/lighter</url>
      <description>An enhanced plugin API for Minecraft servers.</description>
  
      <properties>

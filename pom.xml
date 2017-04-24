@@ -9,18 +9,18 @@
         <version>7</version>
     </parent>
 
-    <groupId>com.destroystokyo.paper</groupId>
-    <artifactId>paper-parent</artifactId>
+    <groupId>com.ulfric.lighter</groupId>
+    <artifactId>lighter-parent</artifactId>
     <version>dev-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Paper-Parent</name>
-    <description>Parent project for all Paper modules.</description>
-    <url>https://github.com/PaperMC/Paper</url>
+    <name>Lighter-Parent</name>
+    <description>Parent project for all Lighter modules.</description>
+    <url>https://github.com/UlfricProjects/lighter</url>
 
     <modules>
-        <module>Paper-Server</module>
-        <module>Paper-API</module>
+        <module>Lighter-Server</module>
+        <module>Lighter-API</module>
     </modules>
 
     <build>

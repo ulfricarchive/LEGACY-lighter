@@ -78,11 +78,11 @@ echo "Importing MC Dev"
 # Apply paper
 cd "$basedir"
 (
-	applyPatch "work/Spigot/Spigot-API" Paper-API HEAD &&
-	applyPatch "work/Spigot/Spigot-Server" Paper-Server HEAD
+	applyPatch "work/Spigot/Spigot-API" Lighter-API HEAD &&
+	applyPatch "work/Spigot/Spigot-Server" Lighter-Server HEAD
     enableCommitSigningIfNeeded
 ) || (
-	echo "Failed to apply Paper Patches"
+	echo "Failed to apply Lighter Patches"
     enableCommitSigningIfNeeded
 	exit 1
 ) || exit 1

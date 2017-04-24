@@ -64,10 +64,10 @@ fi
 # JAR CHECK
 #
 
-jar="$basedir/Paper-Server/target/paper-${minecraftversion}.jar"
+jar="$basedir/Lighter-Server/target/lighter-${minecraftversion}.jar"
 if [ ! -f "$jar" ] || [ "$2" == "build" ] || [ "$3" == "build" ]; then
 (
-    echo "Building Paper"
+    echo "Building Lighter"
     cd "$basedir"
     ./paper patch
     mvn clean install
