@@ -14,14 +14,14 @@ index 6d019d1..0e88ae2 100644
      <modelVersion>4.0.0</modelVersion>
 -    <groupId>org.spigotmc</groupId>
 -    <artifactId>spigot</artifactId>
-+    <groupId>com.destroystokyo.paper</groupId>
-+    <artifactId>paper</artifactId>
++    <groupId>com.ulfric.lighter</groupId>
++    <artifactId>lighter-server</artifactId>
      <packaging>jar</packaging>
      <version>1.11.2-R0.1-SNAPSHOT</version>
 -    <name>Spigot</name>
 -    <url>http://www.spigotmc.org</url>
-+    <name>Paper</name>
-+    <url>https://github.com/PaperMC/Paper</url>
++    <name>Lighter</name>
++    <url>https://github.com/UlfricProjects/lighter</url>
  
      <properties>
          <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,8 +39,8 @@ index 6d019d1..0e88ae2 100644
      <parent>
 -        <groupId>org.spigotmc</groupId>
 -        <artifactId>spigot-parent</artifactId>
-+        <groupId>com.destroystokyo.paper</groupId>
-+        <artifactId>paper-parent</artifactId>
++        <groupId>com.ulfric.lighter</groupId>
++        <artifactId>lighter-parent</artifactId>
          <version>dev-SNAPSHOT</version>
          <relativePath>../pom.xml</relativePath>
      </parent>
@@ -49,8 +49,8 @@ index 6d019d1..0e88ae2 100644
          <dependency>
 -            <groupId>org.spigotmc</groupId>
 -            <artifactId>spigot-api</artifactId>
-+            <groupId>com.destroystokyo.paper</groupId>
-+            <artifactId>paper-api</artifactId>
++            <groupId>com.ulfric.lighter</groupId>
++            <artifactId>lighter-api</artifactId>
              <version>${project.version}</version>
              <scope>compile</scope>
          </dependency>
@@ -58,7 +58,7 @@ index 6d019d1..0e88ae2 100644
  
      <!-- This builds a completely 'ready to start' jar with all dependencies inside -->
      <build>
-+        <finalName>paper-${minecraft.version}</finalName>
++        <finalName>lighter-${minecraft.version}</finalName>
 +        <defaultGoal>clean install</defaultGoal> <!-- Paper -->
          <plugins>
              <plugin>
@@ -189,7 +189,7 @@ index 9304637..674096c 100644
          String result = "Unknown-Version";
  
 -        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/org.spigotmc/spigot-api/pom.properties");
-+        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/com.destroystokyo.paper/paper-api/pom.properties");
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/com.ulfric.lighter/lighter-api/pom.properties");
          Properties properties = new Properties();
  
          if (stream != null) {
