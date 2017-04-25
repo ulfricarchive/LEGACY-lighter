@@ -57,6 +57,6 @@ function savePatches {
     echo "  Patches saved for $what to $what_name-Patches/"
 }
 
-savePatches "$workdir/Spigot/Spigot-API" "Paper-API"
-savePatches "$workdir/Spigot/Spigot-Server" "Paper-Server"
+savePatches "$workdir/Spigot/Spigot-API" "Lighter-API"
+savePatches "$workdir/Spigot/Spigot-Server" "Lighter-Server"
 )
