@@ -1,0 +1,23 @@
+From 26e4ba1e29f73fc8801d670346c9089f63387b62 Mon Sep 17 00:00:00 2001
+From: Adam Harrison <ad@mharrison.us>
+Date: Tue, 25 Apr 2017 12:24:51 -0400
+Subject: [PATCH] Optimize EnchantmentMap comparator
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index 0ac639f7..692f4d19 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -1039,7 +1039,8 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         }
+ 
+         private EnchantmentMap() {
+-            super((o1, o2) -> ((Integer) o1.getId()).compareTo(o2.getId()));
++        	super((o1, o2) -> Integer.compare(o1.getId(), o2.getId())); // Lighter - Optimize EnchantmentMap comparator
++            // super((o1, o2) -> ((Integer) o1.getId()).compareTo(o2.getId()));
+         }
+ 
+         public EnchantmentMap clone() {
+-- 
+2.11.0.windows.1
+
