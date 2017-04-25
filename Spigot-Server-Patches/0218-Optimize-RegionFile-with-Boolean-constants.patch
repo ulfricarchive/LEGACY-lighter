@@ -1,0 +1,68 @@
+From 48ce809ba377fd72173134ccd678f2c26145aeb2 Mon Sep 17 00:00:00 2001
+From: Adam Harrison <ad@mharrison.us>
+Date: Tue, 25 Apr 2017 01:28:12 -0400
+Subject: [PATCH] Optimize RegionFile with Boolean constants
+
+
+diff --git a/src/main/java/net/minecraft/server/RegionFile.java b/src/main/java/net/minecraft/server/RegionFile.java
+index 637e5baa..d3d225be 100644
+--- a/src/main/java/net/minecraft/server/RegionFile.java
++++ b/src/main/java/net/minecraft/server/RegionFile.java
+@@ -61,11 +61,11 @@ public class RegionFile {
+             int j;
+ 
+             for (j = 0; j < i; ++j) {
+-                this.f.add(Boolean.valueOf(true));
++                this.f.add(Boolean.TRUE); // Lighter - use boolean constant
+             }
+ 
+-            this.f.set(0, Boolean.valueOf(false));
+-            this.f.set(1, Boolean.valueOf(false));
++            this.f.set(0, Boolean.FALSE); // Lighter - use boolean constant
++            this.f.set(1, Boolean.FALSE); // Lighter - use boolean constant
+             this.c.seek(0L);
+ 
+             int k;
+@@ -83,7 +83,7 @@ public class RegionFile {
+                 this.d[j] = k;
+                 if (k != 0 && (k >> 8) + (k & 255) <= this.f.size()) {
+                     for (int l = 0; l < (k & 255); ++l) {
+-                        this.f.set((k >> 8) + l, Boolean.valueOf(false));
++                        this.f.set((k >> 8) + l, Boolean.FALSE); // Lighter - use boolean constant
+                     }
+                 }
+             }
+@@ -208,10 +208,10 @@ public class RegionFile {
+                 int l1;
+ 
+                 for (l1 = 0; l1 < j1; ++l1) {
+-                    this.f.set(i1 + l1, Boolean.valueOf(true));
++                    this.f.set(i1 + l1, Boolean.TRUE); // Lighter - use boolean constant
+                 }
+ 
+-                l1 = this.f.indexOf(Boolean.valueOf(true));
++                l1 = this.f.indexOf(Boolean.TRUE); // Lighter - use boolean constant
+                 int i2 = 0;
+                 int j2;
+ 
+@@ -239,7 +239,7 @@ public class RegionFile {
+                     this.a(i, j, l1 << 8 | k1);
+ 
+                     for (j2 = 0; j2 < k1; ++j2) {
+-                        this.f.set(i1 + j2, Boolean.valueOf(false));
++                        this.f.set(i1 + j2, Boolean.FALSE); // Lighter - use boolean constant
+                     }
+ 
+                     this.a(i1, abyte, k);
+@@ -249,7 +249,7 @@ public class RegionFile {
+ 
+                     for (j2 = 0; j2 < k1; ++j2) {
+                         this.c.write(RegionFile.a);
+-                        this.f.add(Boolean.valueOf(false));
++                        this.f.add(Boolean.FALSE); // Lighter - use boolean constant
+                     }
+ 
+                     this.g += 4096 * k1;
+-- 
+2.11.0.windows.1
+
