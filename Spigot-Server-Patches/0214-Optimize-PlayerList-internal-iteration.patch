@@ -1,0 +1,33 @@
+From 3d6bcac6fca5c560db7b4b4b55ea76e0b5343783 Mon Sep 17 00:00:00 2001
+From: Adam Harrison <ad@mharrison.us>
+Date: Mon, 24 Apr 2017 22:09:41 -0400
+Subject: [PATCH] Optimize PlayerList internal iteration
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index 91a45a75..21e5cefa 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -365,7 +365,8 @@ public abstract class PlayerList {
+         // CraftBukkit start - sendAll above replaced with this loop
+         PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityplayer);
+ 
+-        for (int i = 0; i < this.players.size(); ++i) {
++        //for (int i = 0; i < this.players.size(); ++i) {
++        for (int i = 0, l = this.players.size(); i < l; ++i) { // Lighter - optimize PlayerList internal iteration
+             EntityPlayer entityplayer1 = (EntityPlayer) this.players.get(i);
+ 
+             if (entityplayer1.getBukkitEntity().canSee(entityplayer.getBukkitEntity())) {
+@@ -452,7 +453,8 @@ public abstract class PlayerList {
+         // CraftBukkit start
+         //  this.sendAll(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, new EntityPlayer[] { entityplayer}));
+         PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityplayer);
+-        for (int i = 0; i < players.size(); i++) {
++        // for (int i = 0; i < players.size(); i++) {
++        for (int i = 0, l = this.players.size(); i < l; i++) { // Lighter - optimize PlayerList internal iteration
+             EntityPlayer entityplayer2 = (EntityPlayer) this.players.get(i);
+ 
+             if (entityplayer2.getBukkitEntity().canSee(entityplayer.getBukkitEntity())) {
+-- 
+2.11.0.windows.1
+
