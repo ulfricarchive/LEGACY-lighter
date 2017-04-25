@@ -1,0 +1,23 @@
+From d756f536f522faa7d0b333fed8abd3e123b75015 Mon Sep 17 00:00:00 2001
+From: Adam Harrison <ad@mharrison.us>
+Date: Mon, 24 Apr 2017 23:23:35 -0400
+Subject: [PATCH] Rename to Lighter
+
+
+diff --git a/src/main/java/co/aikar/timings/TimingsExport.java b/src/main/java/co/aikar/timings/TimingsExport.java
+index df7f4259..6275ab90 100644
+--- a/src/main/java/co/aikar/timings/TimingsExport.java
++++ b/src/main/java/co/aikar/timings/TimingsExport.java
+@@ -276,7 +276,8 @@ class TimingsExport extends Thread {
+             try {
+                 hostName = InetAddress.getLocalHost().getHostName();
+             } catch(Exception ignored) {}
+-            con.setRequestProperty("User-Agent", "Paper/" + Bukkit.getServerName() + "/" + hostName);
++            //con.setRequestProperty("User-Agent", "Paper/" + Bukkit.getServerName() + "/" + hostName);
++            con.setRequestProperty("User-Agent", "Lighter/" + Bukkit.getServerName() + "/" + hostName);
+             con.setRequestMethod("POST");
+             con.setInstanceFollowRedirects(false);
+ 
+-- 
+2.11.0.windows.1
+
