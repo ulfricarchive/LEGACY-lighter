@@ -1,0 +1,141 @@
+From c10a02019c3db9ca85b257e9aa26784909d44783 Mon Sep 17 00:00:00 2001
+From: Adam Harrison <ad@mharrison.us>
+Date: Tue, 25 Apr 2017 01:18:05 -0400
+Subject: [PATCH] Option to cache map packets
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/PaperConfig.java b/src/main/java/com/destroystokyo/paper/PaperConfig.java
+index 9ea96ac7..c79b5068 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperConfig.java
++++ b/src/main/java/com/destroystokyo/paper/PaperConfig.java
+@@ -262,6 +262,16 @@ public class PaperConfig {
+         flyingKickVehicleMessage = getString("messages.kick.flying-vehicle", flyingKickVehicleMessage);
+     }
+ 
++    public static boolean cacheMapItems = false;
++    private static void cacheMapItems() {
++    	cacheMapItems = getBoolean("settings.cache-map-items", false);
++    }
++
++    public static boolean onlySendHeldMapItems = false;
++    private static void onlySendHeldMapItems() {
++    	onlySendHeldMapItems = getBoolean("settings.only-send-held-map-items", false);
++    }
++
+     public static int playerAutoSaveRate = -1;
+     private static void playerAutoSaveRate() {
+         playerAutoSaveRate = getInt("settings.player-auto-save-rate", -1);
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+index a5c5bd4b..4aaeba41 100644
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import com.destroystokyo.paper.PaperConfig;
+ // CraftBukkit start
+ import com.google.common.base.Preconditions;
+ import org.bukkit.Bukkit;
+@@ -283,21 +284,39 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+ 
+     }
+ 
++    private void tickMap(ItemStack item) // Lighter - optimize maps
++    {
++    	if (!item.isEmpty() && item.getItem().f()) {
++            Packet packet = ((ItemWorldMapBase) item.getItem()).a(item, this.world, this);
++
++            if (packet != null) {
++                this.playerConnection.sendPacket(packet);
++            }
++        }
++    }
++
+     public void playerTick() {
+         try {
+             super.A_();
+ 
+-            for (int i = 0; i < this.inventory.getSize(); ++i) {
+-                ItemStack itemstack = this.inventory.getItem(i);
++            // Lighter start - optimize maps
++            if (PaperConfig.onlySendHeldMapItems) {
++            	this.tickMap(this.getItemInMainHand());
++                this.tickMap(this.getItemInOffHand());
++            } else {
++            	for (int i = 0; i < this.inventory.getSize(); ++i) {
++                    ItemStack itemstack = this.inventory.getItem(i);
+ 
+-                if (!itemstack.isEmpty() && itemstack.getItem().f()) {
+-                    Packet packet = ((ItemWorldMapBase) itemstack.getItem()).a(itemstack, this.world, (EntityHuman) this);
++                    if (!itemstack.isEmpty() && itemstack.getItem().f()) {
++                        Packet packet = ((ItemWorldMapBase) itemstack.getItem()).a(itemstack, this.world, (EntityHuman) this);
+ 
+-                    if (packet != null) {
+-                        this.playerConnection.sendPacket(packet);
++                        if (packet != null) {
++                            this.playerConnection.sendPacket(packet);
++                        }
+                     }
+                 }
+             }
++            // Lighter end
+ 
+             if (this.getHealth() != this.lastHealthSent || this.cc != this.foodData.getFoodLevel() || this.foodData.getSaturationLevel() == 0.0F != this.cd) {
+                 this.playerConnection.sendPacket(new PacketPlayOutUpdateHealth(this.getBukkitEntity().getScaledHealth(), this.foodData.getFoodLevel(), this.foodData.getSaturationLevel())); // CraftBukkit
+diff --git a/src/main/java/net/minecraft/server/ItemWorldMap.java b/src/main/java/net/minecraft/server/ItemWorldMap.java
+index d4438fd9..7dc3e2b8 100644
+--- a/src/main/java/net/minecraft/server/ItemWorldMap.java
++++ b/src/main/java/net/minecraft/server/ItemWorldMap.java
+@@ -1,8 +1,16 @@
+ package net.minecraft.server;
+ 
++import com.destroystokyo.paper.PaperConfig;
+ import com.google.common.collect.HashMultiset;
+ import com.google.common.collect.Iterables;
+ import com.google.common.collect.Multisets;
++
++import gnu.trove.map.TIntObjectMap;
++import gnu.trove.map.hash.TIntObjectHashMap;
++
++import java.util.HashMap;
++import java.util.Map;
++
+ import javax.annotation.Nullable;
+ 
+ // CraftBukkit start
+@@ -299,10 +307,30 @@ public class ItemWorldMap extends ItemWorldMapBase {
+         }
+     }
+ 
+-    @Nullable
++    // Lighter start - optimize maps
++    private static final TIntObjectMap<Packet> MAPS = new TIntObjectHashMap<>(); 
++    public Packet<?> a(ItemStack itemstack, World world, EntityHuman entityhuman) {
++    	if (PaperConfig.cacheMapItems) {
++    		int data = itemstack.getData();
++        	Packet<?> packet = MAPS.get(data);
++        	if (packet != null) {
++        		return packet;
++        	}
++        	packet = this.createMapPacket(itemstack, world, entityhuman);
++        	MAPS.put(data, packet);
++        	return packet;
++    	}
++    	return this.createMapPacket(itemstack, world, entityhuman);
++    }
++    private Packet<?> createMapPacket(ItemStack itemstack, World world, EntityHuman entityhuman) {
++    	return this.getSavedMap(itemstack, world).a(itemstack, world, entityhuman);
++    }
++    /*@Nullable
+     public Packet<?> a(ItemStack itemstack, World world, EntityHuman entityhuman) {
+         return this.getSavedMap(itemstack, world).a(itemstack, world, entityhuman);
+     }
++    */
++    // Lighter end
+ 
+     public void b(ItemStack itemstack, World world, EntityHuman entityhuman) {
+         NBTTagCompound nbttagcompound = itemstack.getTag();
+-- 
+2.11.0.windows.1
+
