@@ -1,0 +1,48 @@
+From 0965c8bdb994943a7afb599edcf3aa21a705bdeb Mon Sep 17 00:00:00 2001
+From: Adam Harrison <ad@mharrison.us>
+Date: Mon, 24 Apr 2017 23:47:58 -0400
+Subject: [PATCH] Option to only play lighting sounds when in range
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/PaperConfig.java b/src/main/java/com/destroystokyo/paper/PaperConfig.java
+index a901cd85..9ea96ac7 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperConfig.java
++++ b/src/main/java/com/destroystokyo/paper/PaperConfig.java
+@@ -240,6 +240,11 @@ public class PaperConfig {
+     private static void bungeeOnlineMode() {
+         bungeeOnlineMode = getBoolean("settings.bungee-online-mode", true);
+     }
++
++    public static boolean playLightingSoundOnlyWhenInRange = false;
++    private static void playLightingSoundOnlyWhenInRange() {
++        saveEmptyScoreboardTeams = getBoolean("settings.play-lighting-sound-only-when-in-range", false);
++    }
+     
+     public static int packetInSpamThreshold = 300;
+     private static void packetInSpamThreshold() {
+diff --git a/src/main/java/net/minecraft/server/EntityLightning.java b/src/main/java/net/minecraft/server/EntityLightning.java
+index 275582aa..a810934e 100644
+--- a/src/main/java/net/minecraft/server/EntityLightning.java
++++ b/src/main/java/net/minecraft/server/EntityLightning.java
+@@ -4,6 +4,8 @@ import java.util.List;
+ 
+ import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+ 
++import com.destroystokyo.paper.PaperConfig;
++
+ public class EntityLightning extends EntityWeather {
+ 
+     private int lifeTicks;
+@@ -70,7 +72,8 @@ public class EntityLightning extends EntityWeather {
+                 double deltaX = this.locX - player.locX;
+                 double deltaZ = this.locZ - player.locZ;
+                 double distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
+-                if (distanceSquared > viewDistance * viewDistance) {
++                // if (distanceSquared > viewDistance * viewDistance) {
++                if (!PaperConfig.playLightingSoundOnlyWhenInRange && distanceSquared > viewDistance * viewDistance) { // Lighter - Configure whether or not lighting sound plays when out of range
+                     double deltaLength = Math.sqrt(distanceSquared);
+                     double relativeX = player.locX + (deltaX / deltaLength) * viewDistance;
+                     double relativeZ = player.locZ + (deltaZ / deltaLength) * viewDistance;
+-- 
+2.11.0.windows.1
+
