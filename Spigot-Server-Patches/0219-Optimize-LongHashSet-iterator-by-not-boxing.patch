@@ -1,0 +1,110 @@
+From 8a9e35bdf6a4bb3db2f1bcb24311266c68e4ab3a Mon Sep 17 00:00:00 2001
+From: Adam Harrison <ad@mharrison.us>
+Date: Tue, 25 Apr 2017 04:43:20 -0400
+Subject: [PATCH] Optimize LongHashSet iterator by not boxing
+
+
+diff --git a/src/main/java/net/minecraft/server/SpawnerCreature.java b/src/main/java/net/minecraft/server/SpawnerCreature.java
+index 29d4c086..a42a0501 100644
+--- a/src/main/java/net/minecraft/server/SpawnerCreature.java
++++ b/src/main/java/net/minecraft/server/SpawnerCreature.java
+@@ -10,6 +10,7 @@ import java.util.Set;
+ import com.destroystokyo.paper.exception.ServerInternalException;
+ import org.bukkit.craftbukkit.util.LongHash;
+ import org.bukkit.craftbukkit.util.LongHashSet;
++import org.bukkit.craftbukkit.util.LongHashSet.LongHashSetIterator;
+ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+ // CraftBukkit end
+ 
+@@ -33,10 +34,12 @@ public final class SpawnerCreature {
+         }
+         // Paper end
+         int i = 0;
+-        Iterator<Long> it = this.b.iterator();
++        // Iterator<Long> it = this.b.iterator();
++        LongHashSetIterator it = this.b.iterator(); // Lighter - optimize LongHashSet iterator
+         while ( it.hasNext() )
+         {
+-            Long coord = it.next();
++            // Long coord = it.next();
++        	long coord = it.next(); // Lighter - optimize LongHashSet iterator;
+             int x = LongHash.msw( coord );
+             int z = LongHash.lsw( coord );
+             if ( !((ChunkProviderServer)server.chunkProvider).unloadQueue.contains( coord ) && server.isChunkLoaded( x, z, true ) )
+@@ -137,13 +140,15 @@ public final class SpawnerCreature {
+ 
+                     if ((mobcnt = getEntityCount(worldserver, enumcreaturetype.a())) <= limit * i / 289) { // Paper - use 17x17 like vanilla (a at top of file)
+                         BlockPosition.MutableBlockPosition blockposition_mutableblockposition = new BlockPosition.MutableBlockPosition();
+-                        Iterator iterator1 = this.b.iterator();
++                        // Iterator iterator1 = this.b.iterator();
++                        LongHashSetIterator iterator1 = this.b.iterator(); // Lighter - optimize LongHashSetIterator
+ 
+                         int moblimit = (limit * i / 256) - mobcnt + 1; // Spigot - up to 1 more than limit
+                         label120:
+                         while (iterator1.hasNext() && (moblimit > 0)) { // Spigot - while more allowed
+                             // CraftBukkit start = use LongHash and LongObjectHashMap
+-                            long key = ((Long) iterator1.next()).longValue();
++                            // long key = ((Long) iterator1.next()).longValue();
++                        	long key = iterator1.next(); // Lighter - optimize LongHashSetIterator
+                             BlockPosition blockposition1 = getRandomPosition(worldserver, LongHash.msw(key), LongHash.lsw(key));
+                             // CraftBukkit
+                             int i2 = blockposition1.getX();
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/LongHashSet.java b/src/main/java/org/bukkit/craftbukkit/util/LongHashSet.java
+index a2135792..ea20b0fe 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/LongHashSet.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/LongHashSet.java
+@@ -17,7 +17,6 @@
+ package org.bukkit.craftbukkit.util;
+ 
+ import java.util.Arrays;
+-import java.util.Iterator;
+ import java.util.ConcurrentModificationException;
+ import java.util.NoSuchElementException;
+ 
+@@ -44,9 +43,16 @@ public class LongHashSet {
+         modCount = 0;
+     }
+ 
++    // Lighter start - optimize LongHashSet iterator
++    /*
+     public Iterator iterator() {
+         return new Itr();
+     }
++    */
++    public LongHashSetIterator iterator() {
++    	return new LongHashSetIterator();
++    }
++    // Lighter end
+ 
+     public int size() {
+         return elements;
+@@ -243,12 +249,14 @@ public class LongHashSet {
+         freeEntries = values.length - elements;
+     }
+ 
+-    private class Itr implements Iterator {
++    // private class Itr implements Iterator {
++    public final class LongHashSetIterator { // Lighter - rename
+         private int index;
+         private int lastReturned = -1;
+         private int expectedModCount;
+ 
+-        public Itr() {
++        // public Itr() {
++        public LongHashSetIterator() { // Lighter - rename
+             for (index = 0; index < values.length && (values[index] == FREE || values[index] == REMOVED); index++) {
+                 // This is just to drive the index forward to the first valid entry
+             }
+@@ -259,7 +267,8 @@ public class LongHashSet {
+             return index != values.length;
+         }
+ 
+-        public Long next() {
++        // public Long next() {
++        public long next() { // Lighter - optimize long hashset iterator
+             if (modCount != expectedModCount) {
+                 throw new ConcurrentModificationException();
+             }
+-- 
+2.11.0.windows.1
+
