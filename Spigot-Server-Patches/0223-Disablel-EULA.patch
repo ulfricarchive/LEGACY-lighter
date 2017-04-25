@@ -1,0 +1,23 @@
+From 731c4749c240cd7726d894425397f83154eb5a1e Mon Sep 17 00:00:00 2001
+From: Adam Harrison <ad@mharrison.us>
+Date: Tue, 25 Apr 2017 13:21:59 -0400
+Subject: [PATCH] Disablel EULA
+
+
+diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
+index e6819139..abe7a8b6 100644
+--- a/src/main/java/net/minecraft/server/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/DedicatedServer.java
+@@ -137,7 +137,8 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+             System.err.println( "If you do not agree to the above EULA please stop your server and remove this flag immediately." );
+         }
+         // Spigot End
+-        if (!this.r.a() && !eulaAgreed) { // Spigot
++        // if (!this.r.a() && !eulaAgreed) { // Spigot
++        if (false && !this.r.a() && !eulaAgreed) { // Lighter - completely disable EULA check
+             DedicatedServer.LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
+             this.r.b();
+             return false;
+-- 
+2.11.0.windows.1
+

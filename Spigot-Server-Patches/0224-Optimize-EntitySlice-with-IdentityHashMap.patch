@@ -1,0 +1,23 @@
+From 34095cb2369f661b8822c544892d12368b9e0360 Mon Sep 17 00:00:00 2001
+From: Adam Harrison <ad@mharrison.us>
+Date: Tue, 25 Apr 2017 13:26:29 -0400
+Subject: [PATCH] Optimize EntitySlice with IdentityHashMap
+
+
+diff --git a/src/main/java/net/minecraft/server/EntitySlice.java b/src/main/java/net/minecraft/server/EntitySlice.java
+index ae6c52f2..885dc4a6 100644
+--- a/src/main/java/net/minecraft/server/EntitySlice.java
++++ b/src/main/java/net/minecraft/server/EntitySlice.java
+@@ -13,7 +13,8 @@ import java.util.Set;
+ public class EntitySlice<T> extends AbstractSet<T> {
+ 
+     private static final Set<Class<?>> a = Sets.newConcurrentHashSet(); // CraftBukkit
+-    private final Map<Class<?>, List<T>> b = Maps.newHashMap();
++    // private final Map<Class<?>, List<T>> b = Maps.newHashMap();
++    private final Map<Class<?>, List<T>> b = Maps.newIdentityHashMap(); // Lighter - optimize EntitySlice map with IdentityHashMap
+     private final Set<Class<?>> c = Sets.newIdentityHashSet();
+     private final Class<T> d;
+     private final List<T> e = Lists.newArrayList();
+-- 
+2.11.0.windows.1
+
