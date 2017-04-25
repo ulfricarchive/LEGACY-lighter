@@ -1,0 +1,32 @@
+From 7e87c7f049c4a0df982d48a1e92616648cdc04ca Mon Sep 17 00:00:00 2001
+From: Adam Harrison <ad@mharrison.us>
+Date: Tue, 25 Apr 2017 04:54:26 -0400
+Subject: [PATCH] Cache Skeleton Skull for powered creeper drops
+
+
+diff --git a/src/main/java/net/minecraft/server/EntitySkeleton.java b/src/main/java/net/minecraft/server/EntitySkeleton.java
+index 09f67cab..f0965a66 100644
+--- a/src/main/java/net/minecraft/server/EntitySkeleton.java
++++ b/src/main/java/net/minecraft/server/EntitySkeleton.java
+@@ -4,6 +4,8 @@ import javax.annotation.Nullable;
+ 
+ public class EntitySkeleton extends EntitySkeletonAbstract {
+ 
++	private static final ItemStack SKELETON_SKULL = new ItemStack(Items.SKULL, 1, 0); // Lighter - cache skeleton skull for charged creeper kills
++
+     public EntitySkeleton(World world) {
+         super(world);
+     }
+@@ -40,7 +42,8 @@ public class EntitySkeleton extends EntitySkeletonAbstract {
+ 
+             if (entitycreeper.isPowered() && entitycreeper.canCauseHeadDrop()) {
+                 entitycreeper.setCausedHeadDrop();
+-                this.a(new ItemStack(Items.SKULL, 1, 0), 0.0F);
++                //this.a(new ItemStack(Items.SKULL, 1, 0), 0.0F);
++                this.a(SKELETON_SKULL, 0.0F); // Lighter - cache skeleton skull for charged creeper kills
+             }
+         }
+         super.die(damagesource); // CraftBukkit - moved from above
+-- 
+2.11.0.windows.1
+
